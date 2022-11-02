@@ -115,6 +115,7 @@ public class MemberServlet extends HttpServlet2 {
                 members.add(dto);
             }
 
+            response.addHeader("Access-Control-Allow-Origin", "*");
             response.setContentType("application/json");
             JsonbBuilder.create().toJson(members, response.getWriter());
         } catch (SQLException e) {
@@ -180,6 +181,9 @@ public class MemberServlet extends HttpServlet2 {
                 members.add(dto);
             }
 
+            response.addHeader("Access-Control-Allow-Origin", "*");
+            response.addHeader("Access-Control-Allow-Headers", "X-Total-Count");
+            response.addHeader("Access-Control-Expose-Headers", "X-Total-Count");
             response.setContentType("application/json");
             JsonbBuilder.create().toJson(members, response.getWriter());
         } catch (SQLException e) {
@@ -224,6 +228,9 @@ public class MemberServlet extends HttpServlet2 {
                 members.add(dto);
             }
 
+            response.addHeader("Access-Control-Allow-Origin", "*");
+            response.addHeader("Access-Control-Allow-Headers", "X-Total-Count");
+            response.addHeader("Access-Control-Expose-Headers", "X-Total-Count");
             response.setContentType("application/json");
             JsonbBuilder.create().toJson(members, response.getWriter());
         } catch (SQLException e) {
