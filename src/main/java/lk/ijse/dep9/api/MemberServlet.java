@@ -257,7 +257,7 @@ public class MemberServlet extends HttpServlet2 {
                         !member.getContact().matches("\\d{3}-\\d{7}")) {
                     throw new JsonbException("Contact is empty or invalid");
                 } else if (member.getAddress() == null ||
-                        !member.getAddress().matches("[A-Za-z0-9,.:;/\\-]+")) {
+                        !member.getAddress().matches("^[A-Za-z0-9|,.:;#\\/\\\\ -]+$")) {
                     throw new JsonbException("Address is empty or invalid");
                 }
 
@@ -274,6 +274,7 @@ public class MemberServlet extends HttpServlet2 {
                     if (affectedRows == 1) {
                         response.setStatus(HttpServletResponse.SC_CREATED);
                         response.setContentType("application/json");
+                        response.setHeader("Access-Control-Allow-Origin", "*");
                         JsonbBuilder.create().toJson(member, response.getWriter());
                     } else {
                         throw new SQLException("Something went wrong");
@@ -355,7 +356,7 @@ public class MemberServlet extends HttpServlet2 {
                     !member.getContact().matches("\\d{3}-\\d{7}")) {
                 throw new JsonbException("Contact is empty or invalid");
             } else if (member.getAddress() == null ||
-                    !member.getAddress().matches("[A-Za-z0-9,.:;/\\-]+")) {
+                    !member.getAddress().matches("^[A-Za-z0-9|,.:;#\\/\\\\ -]+$")) {
                 throw new JsonbException("Address is empty or invalid");
             }
 
@@ -378,6 +379,18 @@ public class MemberServlet extends HttpServlet2 {
             }
         } catch (JsonbException e) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
+        }
+    }
+
+    @Override
+    protected void doOptions(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        resp.setHeader("Access-Control-Allow-Origin", "*");
+        resp.setHeader("Access-Control-Allow-Methods", "POST, GET, PATCH, DELETE, HEAD, OPTIONS, PUT");
+
+        String headers = req.getHeader("Access-Control-Request-Headers");
+        if (headers != null){
+            resp.setHeader("Access-Control-Allow-Headers", headers);
+            resp.setHeader("Access-Control-Expose-Headers", headers);
         }
     }
 }
