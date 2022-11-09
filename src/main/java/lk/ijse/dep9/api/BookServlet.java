@@ -25,6 +25,18 @@ public class BookServlet extends HttpServlet2 {
     private DataSource pool;
 
     @Override
+    protected void doOptions(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        resp.setHeader("Access-Control-Allow-Origin", "*");
+        resp.setHeader("Access-Control-Allow-Methods", "POST, GET, PATCH, DELETE, HEAD, OPTIONS, PUT");
+
+        String headers = req.getHeader("Access-Control-Request-Headers");
+        if (headers != null){
+            resp.setHeader("Access-Control-Allow-Headers", headers);
+            resp.setHeader("Access-Control-Expose-Headers", headers);
+        }
+    }
+
+    @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         if (request.getPathInfo() == null || request.getPathInfo().equals("/")) {
 
