@@ -89,7 +89,6 @@ public class MemberServlet extends HttpServlet2 {
                 String contact = rst.getString("contact");
                 MemberDTO dto = new MemberDTO(id, name, address, contact);
                 response.setContentType("application/json");
-                response.setHeader("Access-Control-Allow-Origin", "*");
                 JsonbBuilder.create().toJson(dto, response.getWriter());
             } else {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND, "Invalid member id");
@@ -116,7 +115,6 @@ public class MemberServlet extends HttpServlet2 {
                 members.add(dto);
             }
 
-            response.addHeader("Access-Control-Allow-Origin", "*");
             response.setContentType("application/json");
             JsonbBuilder.create().toJson(members, response.getWriter());
         } catch (SQLException e) {
@@ -182,9 +180,6 @@ public class MemberServlet extends HttpServlet2 {
                 members.add(dto);
             }
 
-            response.addHeader("Access-Control-Allow-Origin", "*");
-            response.addHeader("Access-Control-Allow-Headers", "X-Total-Count");
-            response.addHeader("Access-Control-Expose-Headers", "X-Total-Count");
             response.setContentType("application/json");
             JsonbBuilder.create().toJson(members, response.getWriter());
         } catch (SQLException e) {
@@ -229,9 +224,6 @@ public class MemberServlet extends HttpServlet2 {
                 members.add(dto);
             }
 
-            response.addHeader("Access-Control-Allow-Origin", "*");
-            response.addHeader("Access-Control-Allow-Headers", "X-Total-Count");
-            response.addHeader("Access-Control-Expose-Headers", "X-Total-Count");
             response.setContentType("application/json");
             JsonbBuilder.create().toJson(members, response.getWriter());
         } catch (SQLException e) {
@@ -275,7 +267,6 @@ public class MemberServlet extends HttpServlet2 {
                     if (affectedRows == 1) {
                         response.setStatus(HttpServletResponse.SC_CREATED);
                         response.setContentType("application/json");
-                        response.setHeader("Access-Control-Allow-Origin", "*");
                         JsonbBuilder.create().toJson(member, response.getWriter());
                     } else {
                         throw new SQLException("Something went wrong");
@@ -317,7 +308,6 @@ public class MemberServlet extends HttpServlet2 {
             if (affectedRows == 0) {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND, "Invalid member id");
             } else {
-                response.setHeader("Access-Control-Allow-Origin", "*");
                 response.setStatus(HttpServletResponse.SC_NO_CONTENT);
             }
         } catch (SQLException | IOException e) {
@@ -371,7 +361,6 @@ public class MemberServlet extends HttpServlet2 {
                 stm.setString(4, member.getId());
 
                 if (stm.executeUpdate() == 1) {
-                    response.setHeader("Access-Control-Allow-Origin", "*");
                     response.setStatus(HttpServletResponse.SC_NO_CONTENT);
                 } else {
                     response.sendError(HttpServletResponse.SC_NOT_FOUND, "Member does not exist");
@@ -385,15 +374,4 @@ public class MemberServlet extends HttpServlet2 {
         }
     }
 
-    @Override
-    protected void doOptions(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        resp.setHeader("Access-Control-Allow-Origin", "*");
-        resp.setHeader("Access-Control-Allow-Methods", "POST, GET, PATCH, DELETE, HEAD, OPTIONS, PUT");
-
-        String headers = req.getHeader("Access-Control-Request-Headers");
-        if (headers != null){
-            resp.setHeader("Access-Control-Allow-Headers", headers);
-            resp.setHeader("Access-Control-Expose-Headers", headers);
-        }
-    }
 }

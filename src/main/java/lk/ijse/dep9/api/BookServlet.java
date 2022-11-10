@@ -25,18 +25,6 @@ public class BookServlet extends HttpServlet2 {
     private DataSource pool;
 
     @Override
-    protected void doOptions(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        resp.setHeader("Access-Control-Allow-Origin", "*");
-        resp.setHeader("Access-Control-Allow-Methods", "POST, GET, PATCH, DELETE, HEAD, OPTIONS, PUT");
-
-        String headers = req.getHeader("Access-Control-Request-Headers");
-        if (headers != null){
-            resp.setHeader("Access-Control-Allow-Headers", headers);
-            resp.setHeader("Access-Control-Expose-Headers", headers);
-        }
-    }
-
-    @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         if (request.getPathInfo() == null || request.getPathInfo().equals("/")) {
 
@@ -113,7 +101,6 @@ public class BookServlet extends HttpServlet2 {
                 books.add(new BookDTO(isbn, title, author, copies));
             }
 
-            response.addHeader("Access-Control-Allow-Origin", "*");
             response.setContentType("application/json");
             JsonbBuilder.create().toJson(books, response.getWriter());
         } catch (SQLException e) {
@@ -148,9 +135,6 @@ public class BookServlet extends HttpServlet2 {
                 books.add(new BookDTO(isbn, title, author, copies));
             }
 
-            response.addHeader("Access-Control-Allow-Origin", "*");
-            response.addHeader("Access-Control-Allow-Headers", "X-Total-Count");
-            response.addHeader("Access-Control-Expose-Headers", "X-Total-Count");
             response.setContentType("application/json");
             JsonbBuilder.create().toJson(books, response.getWriter());
         } catch (SQLException e) {
@@ -220,9 +204,6 @@ public class BookServlet extends HttpServlet2 {
                 books.add(new BookDTO(isbn, title, author, copies));
             }
 
-            response.addHeader("Access-Control-Allow-Origin", "*");
-            response.addHeader("Access-Control-Allow-Headers", "X-Total-Count");
-            response.addHeader("Access-Control-Expose-Headers", "X-Total-Count");
             response.setContentType("application/json");
             JsonbBuilder.create().toJson(books, response.getWriter());
         } catch (SQLException e) {
@@ -242,7 +223,6 @@ public class BookServlet extends HttpServlet2 {
                 int copies = rst.getInt("copies");
                 BookDTO book = new BookDTO(isbn, title, author, copies);
                 response.setContentType("application/json");
-                response.setHeader("Access-Control-Allow-Origin", "*");
                 JsonbBuilder.create().toJson(book, response.getWriter());
             } else {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND, "Invalid book isbn");
@@ -296,7 +276,6 @@ public class BookServlet extends HttpServlet2 {
                 if (affectedRows == 1) {
                     response.setStatus(HttpServletResponse.SC_CREATED);
                     response.setContentType("application/json");
-                    response.setHeader("Access-Control-Allow-Origin", "*");
                     JsonbBuilder.create().toJson(book, response.getWriter());
                 } else {
                     throw new SQLException("Something went wrong");
@@ -339,7 +318,6 @@ public class BookServlet extends HttpServlet2 {
                 stm.setString(4, book.getIsbn());
 
                 if (stm.executeUpdate() == 1) {
-                    response.setHeader("Access-Control-Allow-Origin", "*");
                     response.setStatus(HttpServletResponse.SC_NO_CONTENT);
                 } else {
                     response.sendError(HttpServletResponse.SC_NOT_FOUND, "Book does not exist");
