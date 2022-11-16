@@ -13,6 +13,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lk.ijse.dep9.api.util.HttpServlet2;
 import lk.ijse.dep9.db.ConnectionPool;
 import lk.ijse.dep9.dto.MemberDTO;
+import lk.ijse.dep9.exception.ResponseStatusException;
 import org.apache.commons.dbcp2.BasicDataSource;
 
 import javax.naming.InitialContext;
@@ -51,7 +52,7 @@ public class MemberServlet extends HttpServlet2 {
 
             if (query != null && size != null && page != null) {
                 if (!size.matches("\\d+") || !page.matches("\\d+")) {
-                    response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid page or size");
+                    throw new ResponseStatusException(400, "Invalid page or size");
                 } else {
                     searchPaginatedMembers(query, Integer.parseInt(size), Integer.parseInt(page), response);
                 }
@@ -59,7 +60,7 @@ public class MemberServlet extends HttpServlet2 {
                 searchMembers(query, response);
             } else if (size != null && page != null) {
                 if (!size.matches("\\d+") || !page.matches("\\d+")) {
-                    response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid page or size");
+                    throw new ResponseStatusException(400, "Invalid page or size");
                 } else {
                     loadAllPaginatedMembers(Integer.parseInt(size), Integer.parseInt(page), response);
                 }
@@ -72,7 +73,7 @@ public class MemberServlet extends HttpServlet2 {
             if (matcher.matches()) {
                 getMemberDetails(matcher.group(1), response);
             } else {
-                response.sendError(HttpServletResponse.SC_NOT_IMPLEMENTED);
+                throw new ResponseStatusException(501);
             }
         }
     }
@@ -91,11 +92,10 @@ public class MemberServlet extends HttpServlet2 {
                 response.setContentType("application/json");
                 JsonbBuilder.create().toJson(dto, response.getWriter());
             } else {
-                response.sendError(HttpServletResponse.SC_NOT_FOUND, "Invalid member id");
+                throw new ResponseStatusException(404, "Invalid member id");
             }
         } catch (SQLException e) {
-            e.printStackTrace();
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Failed to fetch the member details");
+            throw new RuntimeException(e);
         }
     }
 
@@ -118,8 +118,7 @@ public class MemberServlet extends HttpServlet2 {
             response.setContentType("application/json");
             JsonbBuilder.create().toJson(members, response.getWriter());
         } catch (SQLException e) {
-            e.printStackTrace();
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Failed to fetch members");
+            throw new RuntimeException(e);
         }
     }
 
@@ -148,8 +147,7 @@ public class MemberServlet extends HttpServlet2 {
             JsonbBuilder.create().toJson(members, response.getWriter());
 
         } catch (SQLException e) {
-            e.printStackTrace();
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Failed to fetch members");
+            throw new RuntimeException(e);
         }
     }
 
@@ -183,8 +181,7 @@ public class MemberServlet extends HttpServlet2 {
             response.setContentType("application/json");
             JsonbBuilder.create().toJson(members, response.getWriter());
         } catch (SQLException e) {
-            e.printStackTrace();
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Failed to fetch members");
+            throw new RuntimeException(e);
         }
     }
 
@@ -227,8 +224,7 @@ public class MemberServlet extends HttpServlet2 {
             response.setContentType("application/json");
             JsonbBuilder.create().toJson(members, response.getWriter());
         } catch (SQLException e) {
-            e.printStackTrace();
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Failed to fetch members");
+            throw new RuntimeException(e);
         }
     }
 
@@ -272,22 +268,20 @@ public class MemberServlet extends HttpServlet2 {
                         throw new SQLException("Something went wrong");
                     }
                 } catch (SQLException e) {
-                    e.printStackTrace();
-                    response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
+                    throw new RuntimeException(e);
                 }
             } catch (JsonbException e) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
+                throw new ResponseStatusException(400, e.getMessage(), e);
             }
         } else {
-            response.sendError(HttpServletResponse.SC_NOT_IMPLEMENTED);
+            throw new ResponseStatusException(501);
         }
     }
 
     @Override
     protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         if (request.getPathInfo() == null || request.getPathInfo().equals("/")) {
-            response.sendError(HttpServletResponse.SC_NOT_IMPLEMENTED);
-            return;
+            throw new ResponseStatusException(501);
         }
 
         Matcher matcher = Pattern.
@@ -296,7 +290,7 @@ public class MemberServlet extends HttpServlet2 {
         if (matcher.matches()) {
             deleteMember(matcher.group(1), response);
         } else {
-            response.sendError(HttpServletResponse.SC_NOT_IMPLEMENTED);
+            throw new ResponseStatusException(501);
         }
     }
 
@@ -306,11 +300,11 @@ public class MemberServlet extends HttpServlet2 {
             stm.setString(1, memberId);
             int affectedRows = stm.executeUpdate();
             if (affectedRows == 0) {
-                response.sendError(HttpServletResponse.SC_NOT_FOUND, "Invalid member id");
+                throw new ResponseStatusException(404, "Invalid member id");
             } else {
                 response.setStatus(HttpServletResponse.SC_NO_CONTENT);
             }
-        } catch (SQLException | IOException e) {
+        } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
@@ -318,8 +312,7 @@ public class MemberServlet extends HttpServlet2 {
     @Override
     protected void doPatch(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         if (request.getPathInfo() == null || request.getPathInfo().equals("/")) {
-            response.sendError(HttpServletResponse.SC_NOT_IMPLEMENTED);
-            return;
+            throw new ResponseStatusException(501);
         }
 
         Matcher matcher = Pattern.
@@ -328,7 +321,7 @@ public class MemberServlet extends HttpServlet2 {
         if (matcher.matches()) {
             updateMember(matcher.group(1), request, response);
         } else {
-            response.sendError(HttpServletResponse.SC_NOT_IMPLEMENTED);
+            throw new ResponseStatusException(501);
         }
     }
 
@@ -363,14 +356,13 @@ public class MemberServlet extends HttpServlet2 {
                 if (stm.executeUpdate() == 1) {
                     response.setStatus(HttpServletResponse.SC_NO_CONTENT);
                 } else {
-                    response.sendError(HttpServletResponse.SC_NOT_FOUND, "Member does not exist");
+                    throw new ResponseStatusException(404, "Member does not exist");
                 }
             } catch (SQLException e) {
-                e.printStackTrace();
-                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Failed to update the member");
+                throw new RuntimeException(e);
             }
         } catch (JsonbException e) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
+            throw new ResponseStatusException(400, e.getMessage(), e);
         }
     }
 

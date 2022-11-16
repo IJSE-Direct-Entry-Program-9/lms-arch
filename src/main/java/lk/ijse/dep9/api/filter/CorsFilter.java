@@ -27,10 +27,12 @@ public class CorsFilter extends HttpFilter {
     protected void doFilter(HttpServletRequest req, HttpServletResponse res, FilterChain chain) throws IOException, ServletException {
 
         String requestedOrigin = req.getHeader("Origin");
-        for (String origin : origins) {
-            if (requestedOrigin.startsWith(origin.trim())){
-                res.setHeader("Access-Control-Allow-Origin", requestedOrigin);
-                break;
+        if (requestedOrigin != null){
+            for (String origin : origins) {
+                if (requestedOrigin.startsWith(origin.trim())){
+                    res.setHeader("Access-Control-Allow-Origin", requestedOrigin);
+                    break;
+                }
             }
         }
 

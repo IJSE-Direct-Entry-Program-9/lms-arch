@@ -111,7 +111,8 @@ public class ReturnServlet extends HttpServlet2 {
                 }
                 connection.commit();
                 response.setStatus(HttpServletResponse.SC_CREATED);
-            }catch (Throwable t){
+            }
+            catch (Throwable t){
                 connection.rollback();
                 if (t instanceof JsonbException) throw t;
                 t.printStackTrace();
