@@ -246,16 +246,8 @@ public class MemberServlet extends HttpServlet2 {
                 }
 
                 try (Connection connection = pool.getConnection()) {
-                    member.setId(UUID.randomUUID().toString());
-                    PreparedStatement stm = connection.
-                            prepareStatement("INSERT INTO member (id, name, address, contact) VALUES (?, ?, ?, ?)");
-                    stm.setString(1, member.getId());
-                    stm.setString(2, member.getName());
-                    stm.setString(3, member.getAddress());
-                    stm.setString(4, member.getContact());
-
-                    int affectedRows = stm.executeUpdate();
-                    if (affectedRows == 1) {
+                    ConnectionUtil.setConnection(connection);
+                    if (BOLogic.createMember(member)) {
                         response.setStatus(HttpServletResponse.SC_CREATED);
                         response.setContentType("application/json");
                         JsonbBuilder.create().toJson(member, response.getWriter());
@@ -339,14 +331,9 @@ public class MemberServlet extends HttpServlet2 {
             }
 
             try (Connection connection = pool.getConnection()) {
-                PreparedStatement stm = connection.
-                        prepareStatement("UPDATE member SET name=?, address=?, contact=? WHERE id=?");
-                stm.setString(1, member.getName());
-                stm.setString(2, member.getAddress());
-                stm.setString(3, member.getContact());
-                stm.setString(4, member.getId());
+                ConnectionUtil.setConnection(connection);
 
-                if (stm.executeUpdate() == 1) {
+                if (BOLogic.updateMember(member)) {
                     response.setStatus(HttpServletResponse.SC_NO_CONTENT);
                 } else {
                     throw new ResponseStatusException(404, "Member does not exist");
