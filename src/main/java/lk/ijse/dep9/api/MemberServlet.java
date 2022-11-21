@@ -1,23 +1,18 @@
 package lk.ijse.dep9.api;
 
 import jakarta.annotation.Resource;
-import jakarta.json.JsonBuilderFactory;
-import jakarta.json.bind.Jsonb;
 import jakarta.json.bind.JsonbBuilder;
-import jakarta.json.bind.JsonbConfig;
 import jakarta.json.bind.JsonbException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lk.ijse.dep9.api.util.HttpServlet2;
-import lk.ijse.dep9.db.ConnectionPool;
 import lk.ijse.dep9.dto.MemberDTO;
 import lk.ijse.dep9.exception.ResponseStatusException;
-import org.apache.commons.dbcp2.BasicDataSource;
+import lk.ijse.dep9.service.BOLogic;
+import lk.ijse.dep9.util.ConnectionUtil;
 
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import javax.sql.DataSource;
 import java.io.IOException;
 import java.sql.*;
@@ -296,13 +291,11 @@ public class MemberServlet extends HttpServlet2 {
 
     private void deleteMember(String memberId, HttpServletResponse response) {
         try (Connection connection = pool.getConnection()) {
-            PreparedStatement stm = connection.prepareStatement("DELETE FROM member WHERE id=?");
-            stm.setString(1, memberId);
-            int affectedRows = stm.executeUpdate();
-            if (affectedRows == 0) {
-                throw new ResponseStatusException(404, "Invalid member id");
-            } else {
+            ConnectionUtil.setConnection(connection);
+            if (BOLogic.deleteMember(memberId)){
                 response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+            }else{
+                throw new ResponseStatusException(400, "Something went wrong");
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
