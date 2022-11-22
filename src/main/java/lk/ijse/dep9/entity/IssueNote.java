@@ -14,4 +14,9 @@ public class IssueNote implements Serializable {
     private int id;
     private Date date;
     private String memberId;
+
+    public IssueNote(Date date, String memberId) {
+        this.date = date;
+        this.memberId = memberId;
+    }
 }
