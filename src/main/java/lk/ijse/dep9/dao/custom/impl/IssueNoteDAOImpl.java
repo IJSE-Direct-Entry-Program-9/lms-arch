@@ -1,6 +1,6 @@
-package lk.ijse.dep9.dao.impl;
+package lk.ijse.dep9.dao.custom.impl;
 
-import lk.ijse.dep9.dao.IssueNoteDAO;
+import lk.ijse.dep9.dao.custom.IssueNoteDAO;
 import lk.ijse.dep9.dao.exception.ConstraintViolationException;
 import lk.ijse.dep9.entity.IssueNote;
 
@@ -18,7 +18,7 @@ public class IssueNoteDAOImpl implements IssueNoteDAO {
     }
 
     @Override
-    public long countIssueNotes() {
+    public long count() {
         try {
             PreparedStatement stm = connection.prepareStatement("SELECT COUNT(id) FROM issue_note");
             ResultSet rst = stm.executeQuery();
@@ -30,19 +30,19 @@ public class IssueNoteDAOImpl implements IssueNoteDAO {
     }
 
     @Override
-    public void deleteIssueNoteById(int id) throws ConstraintViolationException {
+    public void deleteById(Integer id) throws ConstraintViolationException {
         try {
             PreparedStatement stm = connection.prepareStatement("DELETE FROM issue_note WHERE id = ?");
             stm.setInt(1, id);
             stm.executeUpdate();
         } catch (SQLException e) {
-            if (existsIssueNoteById(id)) throw new ConstraintViolationException("Issue Note ID still exists within other tables",e);
+            if (existsById(id)) throw new ConstraintViolationException("Issue Note ID still exists within other tables",e);
             throw new RuntimeException(e);
         }
     }
 
     @Override
-    public boolean existsIssueNoteById(int id) {
+    public boolean existsById(Integer id) {
         try {
             PreparedStatement stm = connection.prepareStatement("SELECT id FROM issue_note WHERE id = ?");
             stm.setInt(1, id);
@@ -53,7 +53,7 @@ public class IssueNoteDAOImpl implements IssueNoteDAO {
     }
 
     @Override
-    public List<IssueNote> findAllIssueNotes() {
+    public List<IssueNote> findAll() {
         try {
             PreparedStatement stm = connection.prepareStatement("SELECT * FROM issue_note");
             ResultSet rst = stm.executeQuery();
@@ -71,7 +71,7 @@ public class IssueNoteDAOImpl implements IssueNoteDAO {
     }
 
     @Override
-    public Optional<IssueNote> findIssueNoteById(int id) {
+    public Optional<IssueNote> findById(Integer id) {
         try {
             PreparedStatement stm = connection.prepareStatement("SELECT * FROM issue_note WHERE id = ?");
             stm.setInt(1, id);
@@ -89,7 +89,7 @@ public class IssueNoteDAOImpl implements IssueNoteDAO {
     }
 
     @Override
-    public IssueNote saveIssueNote(IssueNote issueNote) {
+    public IssueNote save(IssueNote issueNote) {
         try {
             PreparedStatement stm = connection.prepareStatement("INSERT INTO issue_note (date, member_id) VALUES (?, ?)", Statement.RETURN_GENERATED_KEYS);
             stm.setDate(1, issueNote.getDate());
@@ -109,7 +109,7 @@ public class IssueNoteDAOImpl implements IssueNoteDAO {
     }
 
     @Override
-    public IssueNote updateIssueNote(IssueNote issueNote) {
+    public IssueNote update(IssueNote issueNote) {
         try {
             PreparedStatement stm = connection.prepareStatement("UPDATE issue_note SET date=?, member_id=? WHERE id=?");
             stm.setDate(1, issueNote.getDate());

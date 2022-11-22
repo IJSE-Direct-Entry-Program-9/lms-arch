@@ -2,7 +2,7 @@ package lk.ijse.dep9.dao;
 
 import com.github.javafaker.Faker;
 import lk.ijse.dep9.dao.exception.ConstraintViolationException;
-import lk.ijse.dep9.dao.impl.MemberDAOImpl;
+import lk.ijse.dep9.dao.custom.impl.MemberDAOImpl;
 import lk.ijse.dep9.entity.Member;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;

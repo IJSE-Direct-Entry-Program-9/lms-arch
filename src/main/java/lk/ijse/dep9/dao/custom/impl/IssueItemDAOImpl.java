@@ -1,6 +1,6 @@
-package lk.ijse.dep9.dao.impl;
+package lk.ijse.dep9.dao.custom.impl;
 
-import lk.ijse.dep9.dao.IssueItemDAO;
+import lk.ijse.dep9.dao.custom.IssueItemDAO;
 import lk.ijse.dep9.dao.exception.ConstraintViolationException;
 import lk.ijse.dep9.entity.IssueItem;
 import lk.ijse.dep9.entity.IssueItemPK;
@@ -22,7 +22,7 @@ public class IssueItemDAOImpl implements IssueItemDAO {
     }
 
     @Override
-    public long countIssueItems() {
+    public long count() {
         try {
             PreparedStatement stm = connection.prepareStatement("SELECT COUNT(isbn) FROM issue_item");
             ResultSet rst = stm.executeQuery();
@@ -34,20 +34,20 @@ public class IssueItemDAOImpl implements IssueItemDAO {
     }
 
     @Override
-    public void deleteIssueItemByPK(IssueItemPK issueItemPK) throws ConstraintViolationException {
+    public void deleteById(IssueItemPK issueItemPK) throws ConstraintViolationException {
         try {
             PreparedStatement stm = connection.prepareStatement("DELETE FROM issue_item WHERE isbn = ? AND issue_id = ?");
             stm.setString(1, issueItemPK.getIsbn());
             stm.setInt(2, issueItemPK.getIssueId());
             stm.executeUpdate();
         } catch (SQLException e) {
-            if (existsIssueItemByPK(issueItemPK)) throw new ConstraintViolationException("Issue Item primary key still exists within other tables", e);
+            if (existsById(issueItemPK)) throw new ConstraintViolationException("Issue Item primary key still exists within other tables", e);
             throw new RuntimeException(e);
         }
     }
 
     @Override
-    public boolean existsIssueItemByPK(IssueItemPK issueItemPK) {
+    public boolean existsById(IssueItemPK issueItemPK) {
         try {
             PreparedStatement stm = connection.prepareStatement("SELECT isbn FROM issue_item WHERE isbn = ? AND issue_id = ?");
             stm.setString(1, issueItemPK.getIsbn());
@@ -59,7 +59,7 @@ public class IssueItemDAOImpl implements IssueItemDAO {
     }
 
     @Override
-    public List<IssueItem> findAllIssueItems() {
+    public List<IssueItem> findAll() {
         try {
             PreparedStatement stm = connection.prepareStatement("SELECT * FROM issue_item");
             ResultSet rst = stm.executeQuery();
@@ -76,7 +76,7 @@ public class IssueItemDAOImpl implements IssueItemDAO {
     }
 
     @Override
-    public Optional<IssueItem> findIssueItemByPK(IssueItemPK issueItemPK) {
+    public Optional<IssueItem> findById(IssueItemPK issueItemPK) {
         try {
             PreparedStatement stm = connection.prepareStatement("SELECT * FROM issue_item WHERE isbn = ? AND issue_id = ?");
             stm.setString(1, issueItemPK.getIsbn());
@@ -94,7 +94,7 @@ public class IssueItemDAOImpl implements IssueItemDAO {
     }
 
     @Override
-    public IssueItem saveIssueItem(IssueItem issueItem) {
+    public IssueItem save(IssueItem issueItem) {
         try {
             PreparedStatement stm = connection.prepareStatement("INSERT INTO issue_item (issue_id, isbn) VALUES (?, ?)");
             stm.setInt(1, issueItem.getIssueItemPK().getIssueId());
@@ -107,6 +107,11 @@ public class IssueItemDAOImpl implements IssueItemDAO {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public IssueItem update(IssueItem entity) throws ConstraintViolationException {
+        return null;
     }
 
 }

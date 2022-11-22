@@ -1,6 +1,6 @@
 package lk.ijse.dep9.service;
 
-import lk.ijse.dep9.dao.impl.BookDAOImpl;
+import lk.ijse.dep9.dao.custom.impl.BookDAOImpl;
 import lk.ijse.dep9.dto.BookDTO;
 import lk.ijse.dep9.dto.MemberDTO;
 import lk.ijse.dep9.entity.Book;

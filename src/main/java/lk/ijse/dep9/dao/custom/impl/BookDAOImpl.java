@@ -1,6 +1,6 @@
-package lk.ijse.dep9.dao.impl;
+package lk.ijse.dep9.dao.custom.impl;
 
-import lk.ijse.dep9.dao.BookDAO;
+import lk.ijse.dep9.dao.custom.BookDAO;
 import lk.ijse.dep9.dao.exception.ConstraintViolationException;
 import lk.ijse.dep9.entity.Book;
 
@@ -21,7 +21,7 @@ public class BookDAOImpl implements BookDAO {
     }
 
     @Override
-    public long countBooks() {
+    public long count() {
         try {
             PreparedStatement stm = connection.prepareStatement("SELECT COUNT(isbn) FROM book");
             ResultSet rst = stm.executeQuery();
@@ -33,19 +33,19 @@ public class BookDAOImpl implements BookDAO {
     }
 
     @Override
-    public void deleteBookByISBN(String isbn) throws ConstraintViolationException {
+    public void deleteById(String isbn) throws ConstraintViolationException {
         try {
             PreparedStatement stm = connection.prepareStatement("DELETE FROM book WHERE isbn = ?");
             stm.setString(1, isbn);
             stm.executeUpdate();
         } catch (SQLException e) {
-            if (existsBookByISBN(isbn)) throw new ConstraintViolationException("Book ISBN still exists within other tabels", e);
+            if (existsById(isbn)) throw new ConstraintViolationException("Book ISBN still exists within other tabels", e);
             throw new RuntimeException(e);
         }
     }
 
     @Override
-    public boolean existsBookByISBN(String isbn) {
+    public boolean existsById(String isbn) {
         try {
             PreparedStatement stm = connection.prepareStatement("SELECT isbn FROM book WHERE isbn = ?");
             stm.setString(1, isbn);
@@ -56,7 +56,7 @@ public class BookDAOImpl implements BookDAO {
     }
 
     @Override
-    public List<Book> findAllBooks() {
+    public List<Book> findAll() {
         try {
             PreparedStatement stm = connection.prepareStatement("SELECT * FROM book");
             ResultSet rst = stm.executeQuery();
@@ -75,7 +75,7 @@ public class BookDAOImpl implements BookDAO {
     }
 
     @Override
-    public Optional<Book> findBookByISBN(String isbn) {
+    public Optional<Book> findById(String isbn) {
         try {
             PreparedStatement stm = connection.prepareStatement("SELECT * FROM book WHERE isbn = ?");
             stm.setString(1, isbn);
@@ -94,7 +94,7 @@ public class BookDAOImpl implements BookDAO {
     }
 
     @Override
-    public Book saveBook(Book book) {
+    public Book save(Book book) {
         try {
             PreparedStatement stm = connection.prepareStatement("INSERT INTO book (isbn, title, author, copies) VALUES (?, ?, ?, ?)");
             stm.setString(1, book.getIsbn());
@@ -112,7 +112,7 @@ public class BookDAOImpl implements BookDAO {
     }
 
     @Override
-    public Book updateBook(Book book) {
+    public Book update(Book book) {
         try {
             PreparedStatement stm = connection.prepareStatement("UPDATE book SET title=?, author=?, copies=? WHERE isbn=?");
             stm.setString(1, book.getTitle());

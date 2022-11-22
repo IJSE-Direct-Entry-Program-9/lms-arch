@@ -1,6 +1,6 @@
-package lk.ijse.dep9.dao.impl;
+package lk.ijse.dep9.dao.custom.impl;
 
-import lk.ijse.dep9.dao.ReturnDAO;
+import lk.ijse.dep9.dao.custom.ReturnDAO;
 import lk.ijse.dep9.entity.Return;
 import lk.ijse.dep9.entity.ReturnPK;
 
@@ -18,7 +18,7 @@ public class ReturnDAOImpl implements ReturnDAO {
     }
 
     @Override
-    public long countReturns() {
+    public long count() {
         try {
             PreparedStatement stm = connection.prepareStatement("SELECT COUNT(isbn) FROM `return`");
             ResultSet rst = stm.executeQuery();
@@ -30,7 +30,7 @@ public class ReturnDAOImpl implements ReturnDAO {
     }
 
     @Override
-    public void deleteReturnByPK(ReturnPK returnPK) {
+    public void deleteById(ReturnPK returnPK) {
         try {
             PreparedStatement stm = connection.prepareStatement("DELETE FROM `return` WHERE isbn = ? AND issue_id = ?");
             stm.setInt(1, returnPK.getIssueId());
@@ -42,7 +42,7 @@ public class ReturnDAOImpl implements ReturnDAO {
     }
 
     @Override
-    public boolean existsReturnByPK(ReturnPK returnPK) {
+    public boolean existsById(ReturnPK returnPK) {
         try {
             PreparedStatement stm = connection.prepareStatement("SELECT isbn FROM `return` WHERE issue_id=? AND isbn=?");
             stm.setInt(1, returnPK.getIssueId());
@@ -54,7 +54,7 @@ public class ReturnDAOImpl implements ReturnDAO {
     }
 
     @Override
-    public List<Return> findAllReturns() {
+    public List<Return> findAll() {
         try {
             PreparedStatement stm = connection.prepareStatement("SELECT * FROM `return`");
             ResultSet rst = stm.executeQuery();
@@ -72,7 +72,7 @@ public class ReturnDAOImpl implements ReturnDAO {
     }
 
     @Override
-    public Optional<Return> findReturnByPK(ReturnPK returnPK) {
+    public Optional<Return> findById(ReturnPK returnPK) {
         try {
             PreparedStatement stm = connection.prepareStatement("SELECT * FROM `return` WHERE issue_id = ? AND isbn = ?");
             stm.setInt(1, returnPK.getIssueId());
@@ -92,7 +92,7 @@ public class ReturnDAOImpl implements ReturnDAO {
     }
 
     @Override
-    public Return saveReturn(Return returnItem) {
+    public Return save(Return returnItem) {
         try {
             PreparedStatement stm = connection.prepareStatement("INSERT INTO `return` (date, issue_id, isbn) VALUES (?, ?, ?)");
             stm.setDate(1, returnItem.getDate());
@@ -109,7 +109,7 @@ public class ReturnDAOImpl implements ReturnDAO {
     }
 
     @Override
-    public Return updateReturn(Return returnItem) {
+    public Return update(Return returnItem) {
         try {
             PreparedStatement stm = connection.prepareStatement("UPDATE `return` SET date = ? WHERE issue_id=? AND isbn=?");
             stm.setDate(1, returnItem.getDate());

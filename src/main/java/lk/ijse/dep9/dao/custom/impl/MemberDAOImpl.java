@@ -1,6 +1,6 @@
-package lk.ijse.dep9.dao.impl;
+package lk.ijse.dep9.dao.custom.impl;
 
-import lk.ijse.dep9.dao.MemberDAO;
+import lk.ijse.dep9.dao.custom.MemberDAO;
 import lk.ijse.dep9.dao.exception.ConstraintViolationException;
 import lk.ijse.dep9.entity.Member;
 
@@ -21,7 +21,7 @@ public class MemberDAOImpl implements MemberDAO {
     }
 
     @Override
-    public long countMembers() {
+    public long count() {
         try {
             PreparedStatement stm = connection.prepareStatement("SELECT COUNT(id) FROM member");
             ResultSet rst = stm.executeQuery();
@@ -33,19 +33,19 @@ public class MemberDAOImpl implements MemberDAO {
     }
 
     @Override
-    public void deleteMemberById(String id) throws ConstraintViolationException {
+    public void deleteById(String id) throws ConstraintViolationException {
         try {
             PreparedStatement stm = connection.prepareStatement("DELETE FROM member WHERE id = ?");
             stm.setString(1, id);
             stm.executeUpdate();
         } catch (SQLException e) {
-            if (existsMemberById(id)) throw new ConstraintViolationException("Member ID still exists in other tables", e);
+            if (existsById(id)) throw new ConstraintViolationException("Member ID still exists in other tables", e);
             throw new RuntimeException(e);
         }
     }
 
     @Override
-    public boolean existsMemberById(String id) {
+    public boolean existsById(String id) {
         try {
             PreparedStatement stm = connection.prepareStatement("SELECT id FROM member WHERE id = ?");
             stm.setString(1, id);
@@ -56,7 +56,7 @@ public class MemberDAOImpl implements MemberDAO {
     }
 
     @Override
-    public List<Member> findAllMembers() {
+    public List<Member> findAll() {
         try {
             PreparedStatement stm = connection.prepareStatement("SELECT * FROM member");
             ResultSet rst = stm.executeQuery();
@@ -75,7 +75,7 @@ public class MemberDAOImpl implements MemberDAO {
     }
 
     @Override
-    public Optional<Member> findMemberById(String id) {
+    public Optional<Member> findById(String id) {
         try {
             PreparedStatement stm = connection.prepareStatement("SELECT * FROM member WHERE id = ?");
             stm.setString(1, id);
@@ -94,7 +94,7 @@ public class MemberDAOImpl implements MemberDAO {
     }
 
     @Override
-    public Member saveMember(Member member) {
+    public Member save(Member member) {
         try {
             PreparedStatement stm = connection.prepareStatement("INSERT INTO member (id, name, address, contact) VALUES (?, ?, ?, ?)");
             stm.setString(1, member.getId());
@@ -112,7 +112,7 @@ public class MemberDAOImpl implements MemberDAO {
     }
 
     @Override
-    public Member updateMember(Member member) {
+    public Member update(Member member) {
         try {
             PreparedStatement stm = connection.prepareStatement("UPDATE member SET name=?, address=?, contact=? WHERE id=?");
             stm.setString(1, member.getName());
