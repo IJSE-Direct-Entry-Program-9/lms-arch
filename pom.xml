@@ -7,7 +7,7 @@
     <groupId>lk.ijse.dep9</groupId>
     <artifactId>lms-back-end</artifactId>
     <version>1.0.0</version>
-    <name>back-end</name>
+    <name>lms-with-architecture</name>
     <packaging>war</packaging>
 
     <properties>

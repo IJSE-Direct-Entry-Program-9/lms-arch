@@ -87,15 +87,14 @@ public class BookDAO {
 
     public Book saveBook(Book book) {
         try {
-            PreparedStatement stm = connection.
-                    prepareStatement("INSERT INTO book (isbn, title, author, copies) VALUES (?, ?, ?, ?)");
+            PreparedStatement stm = connection.prepareStatement("INSERT INTO book (isbn, title, author, copies) VALUES (?, ?, ?, ?)");
             stm.setString(1, book.getIsbn());
             stm.setString(2, book.getTitle());
             stm.setString(3, book.getAuthor());
             stm.setInt(4, book.getCopies());
-            if (stm.executeUpdate() == 1){
+            if (stm.executeUpdate() == 1) {
                 return book;
-            }else{
+            } else {
                 throw new SQLException("Failed to save the book");
             }
         } catch (SQLException e) {
@@ -105,15 +104,14 @@ public class BookDAO {
 
     public Book updateBook(Book book) {
         try {
-            PreparedStatement stm = connection.
-                    prepareStatement("UPDATE book SET title=?, author=?, copies=? WHERE isbn=?");
+            PreparedStatement stm = connection.prepareStatement("UPDATE book SET title=?, author=?, copies=? WHERE isbn=?");
             stm.setString(1, book.getTitle());
             stm.setString(2, book.getAuthor());
             stm.setInt(3, book.getCopies());
             stm.setString(4, book.getIsbn());
-            if (stm.executeUpdate() == 1){
+            if (stm.executeUpdate() == 1) {
                 return book;
-            }else{
+            } else {
                 throw new SQLException("Failed to update the book");
             }
         } catch (SQLException e) {
@@ -121,10 +119,9 @@ public class BookDAO {
         }
     }
 
-    public List<Book> findBooksByQuery(String query){
+    public List<Book> findBooksByQuery(String query) {
         try {
-            PreparedStatement stm = connection.
-                    prepareStatement("SELECT * FROM book WHERE isbn LIKE ? OR title LIKE ? OR author LIKE ?");
+            PreparedStatement stm = connection.prepareStatement("SELECT * FROM book WHERE isbn LIKE ? OR title LIKE ? OR author LIKE ?");
             query = "%" + query + "%";
             stm.setString(1, query);
             stm.setString(2, query);
@@ -145,10 +142,9 @@ public class BookDAO {
 
     }
 
-    public List<Book> findBooksByQuery(String query, int size, int page){
+    public List<Book> findBooksByQuery(String query, int size, int page) {
         try {
-            PreparedStatement stm = connection.
-                    prepareStatement("SELECT * FROM book WHERE isbn LIKE ? OR title LIKE ? OR author LIKE ? LIMIT ? OFFSET ?");
+            PreparedStatement stm = connection.prepareStatement("SELECT * FROM book WHERE isbn LIKE ? OR title LIKE ? OR author LIKE ? LIMIT ? OFFSET ?");
             query = "%" + query + "%";
             stm.setString(1, query);
             stm.setString(2, query);

@@ -3,13 +3,12 @@ package lk.ijse.dep9.api;
 import jakarta.annotation.Resource;
 import jakarta.json.bind.JsonbBuilder;
 import jakarta.json.bind.JsonbException;
-import jakarta.servlet.*;
-import jakarta.servlet.http.*;
-import jakarta.servlet.annotation.*;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lk.ijse.dep9.api.util.HttpServlet2;
-import lk.ijse.dep9.dao.DataAccess;
 import lk.ijse.dep9.dto.BookDTO;
-import lk.ijse.dep9.dto.MemberDTO;
 import lk.ijse.dep9.service.BOLogic;
 import lk.ijse.dep9.util.ConnectionUtil;
 
@@ -17,7 +16,6 @@ import javax.sql.DataSource;
 import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -67,7 +65,7 @@ public class BookServlet extends HttpServlet2 {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         if (request.getPathInfo() == null || request.getPathInfo().equals("/")) {
             saveBook(request, response);
-        }else{
+        } else {
             response.sendError(HttpServletResponse.SC_NOT_IMPLEMENTED);
         }
     }
@@ -245,9 +243,9 @@ public class BookServlet extends HttpServlet2 {
             BookDTO book = JsonbBuilder.create().
                     fromJson(request.getReader(), BookDTO.class);
 
-            if(book.getIsbn() == null || !book.getIsbn().matches("([0-9][0-9\\\\-]*[0-9])")){
+            if (book.getIsbn() == null || !book.getIsbn().matches("([0-9][0-9\\\\-]*[0-9])")) {
                 throw new JsonbException("Book isbn is empty or invalid");
-            }else if (book.getTitle() == null ||
+            } else if (book.getTitle() == null ||
                     !book.getTitle().matches(".+")) {
                 throw new JsonbException("Book title is empty or invalid");
             } else if (book.getAuthor() == null ||
@@ -286,7 +284,7 @@ public class BookServlet extends HttpServlet2 {
 
             if (book.getIsbn() == null || !book.getIsbn().equalsIgnoreCase(isbn)) {
                 throw new JsonbException("Book ISBN is empty or invalid");
-            }else if (book.getTitle() == null ||
+            } else if (book.getTitle() == null ||
                     !book.getTitle().matches(".+")) {
                 throw new JsonbException("Book title is empty or invalid");
             } else if (book.getAuthor() == null ||
