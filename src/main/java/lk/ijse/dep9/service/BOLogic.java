@@ -1,5 +1,8 @@
 package lk.ijse.dep9.service;
 
+import lk.ijse.dep9.dao.DAOFactory;
+import lk.ijse.dep9.dao.DAOTypes;
+import lk.ijse.dep9.dao.custom.BookDAO;
 import lk.ijse.dep9.dao.custom.impl.BookDAOImpl;
 import lk.ijse.dep9.dto.BookDTO;
 import lk.ijse.dep9.dto.MemberDTO;
@@ -21,18 +24,18 @@ public class BOLogic {
     }
 
     public static boolean saveBook(BookDTO book) {
-        BookDAOImpl bookDAOImpl = new BookDAOImpl(ConnectionUtil.getConnection());
-        if (!bookDAOImpl.existsBookByISBN(book.getIsbn())){
-            bookDAOImpl.saveBook(new Book(book.getIsbn(), book.getTitle(), book.getAuthor(),book.getCopies()));
+        BookDAO bookDAO = DAOFactory.getInstance().getDAO(ConnectionUtil.getConnection(), DAOTypes.BOOK);
+        if (!bookDAO.existsById(book.getIsbn())){
+            bookDAO.save(new Book(book.getIsbn(), book.getTitle(), book.getAuthor(),book.getCopies()));
             return true;
         }
         return false;
     }
 
     public static boolean updateBook(BookDTO book) {
-        BookDAOImpl bookDAOImpl = new BookDAOImpl(ConnectionUtil.getConnection());
-        if (!bookDAOImpl.existsBookByISBN(book.getIsbn())){
-            bookDAOImpl.updateBook( new Book(book.getIsbn(), book.getTitle(), book.getAuthor(),book.getCopies()));
+        BookDAO bookDAO = DAOFactory.getInstance().getDAO(ConnectionUtil.getConnection(),DAOTypes.BOOK);
+        if (!bookDAO.existsById(book.getIsbn())){
+            bookDAO.update( new Book(book.getIsbn(), book.getTitle(), book.getAuthor(),book.getCopies()));
             return true;
         }
         return false;

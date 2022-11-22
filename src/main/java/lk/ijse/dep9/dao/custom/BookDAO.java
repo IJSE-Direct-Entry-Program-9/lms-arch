@@ -1,11 +1,11 @@
 package lk.ijse.dep9.dao.custom;
 
-import lk.ijse.dep9.dao.SuperDAO;
+import lk.ijse.dep9.dao.CrudDAO;
 import lk.ijse.dep9.entity.Book;
 
 import java.util.List;
 
-public interface BookDAO extends SuperDAO<Book, String> {
+public interface BookDAO extends CrudDAO<Book, String> {
 
     List<Book> findBooksByQuery(String query);
 
