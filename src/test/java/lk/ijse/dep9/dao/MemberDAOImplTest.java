@@ -46,14 +46,14 @@ class MemberDAOImplTest {
     //@Order(1)
     @Test
     void countMembers() {
-        long actualMemberCount = memberDAOImpl.countMembers();
+        long actualMemberCount = memberDAOImpl.count();
         assertEquals(3, actualMemberCount);
     }
 
     //@Order(1)
     @Test
     void findAllMembers() {
-        List<Member> members = memberDAOImpl.findAllMembers();
+        List<Member> members = memberDAOImpl.findAll();
         assertEquals(3, members.size());
         members.forEach(member -> {
             assertNotNull(member);
@@ -75,17 +75,17 @@ class MemberDAOImplTest {
                         faker.address().fullAddress(),
                         faker.regexify("0\\d{2}-\\d{7}"));
         System.out.println(expectedMember);
-        long expectedCount = memberDAOImpl.countMembers() + 1;
-        Member actualMember = memberDAOImpl.saveMember(expectedMember);
+        long expectedCount = memberDAOImpl.count() + 1;
+        Member actualMember = memberDAOImpl.save(expectedMember);
         assertEquals(expectedMember, actualMember);
-        assertEquals(expectedCount, memberDAOImpl.countMembers());
+        assertEquals(expectedCount, memberDAOImpl.count());
     }
 
     @ParameterizedTest
     @CsvFileSource(resources = "/member-test-data.csv")
     void deleteMemberById(String memberId, boolean expectedResult) {
         try {
-            memberDAOImpl.deleteMemberById(memberId);
+            memberDAOImpl.deleteById(memberId);
         } catch (ConstraintViolationException e) {
             System.out.println("Failed to delete " + memberId);
         }
@@ -95,27 +95,27 @@ class MemberDAOImplTest {
     @CsvFileSource(resources = "/member-test-data.csv")
     void existsMemberById(String memberId, boolean expectedResult) {
         //String memberId = "104ccff3-c584-4782-a582-8a06479b46f6";
-        boolean actualValue = memberDAOImpl.existsMemberById(memberId);
+        boolean actualValue = memberDAOImpl.existsById(memberId);
         assertEquals(actualValue, expectedResult);
     }
 
     @ParameterizedTest
     @CsvFileSource(resources = "/member-test-data.csv")
     void findMemberById(String memberId, boolean expectedResult) {
-        Optional<Member> optMember = memberDAOImpl.findMemberById(memberId);
+        Optional<Member> optMember = memberDAOImpl.findById(memberId);
         assertEquals(optMember.isPresent(), expectedResult);
     }
 
     @ParameterizedTest
     @CsvFileSource(resources = "/member-test-data.csv")
     void updateMember(String memberId, boolean exist) {
-        Optional<Member> optMember = memberDAOImpl.findMemberById(memberId);
+        Optional<Member> optMember = memberDAOImpl.findById(memberId);
         Faker faker = new Faker();
         optMember.ifPresent(member -> {
             member.setName(faker.name().fullName());
             member.setAddress(faker.address().fullAddress());
             member.setContact(faker.regexify("0\\d{2}-\\d{7}"));
-            Member updatedMember = memberDAOImpl.updateMember(member);
+            Member updatedMember = memberDAOImpl.update(member);
             assertEquals(member, updatedMember);
         });
     }
