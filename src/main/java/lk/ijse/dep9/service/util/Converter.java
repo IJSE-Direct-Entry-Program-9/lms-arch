@@ -60,12 +60,9 @@ public class Converter {
     }
 
     public Return toReturn(ReturnItemDTO returnItemDTO){
-        mapper.typeMap(ReturnItemDTO.class, Return.class)
-                .addMapping(ReturnItemDTO::getIsbn,
-                        (aReturn, o) -> aReturn.getReturnPK().setIsbn(o.toString()));
-        mapper.typeMap(ReturnItemDTO.class, Return.class)
-                .addMapping(ReturnItemDTO::getIssueNoteId,
-                        (aReturn, o) -> aReturn.getReturnPK().setIssueId((Integer) o));
+        mapper.typeMap(ReturnItemDTO.class, Return.class).
+                setConverter(mc ->
+                        new Return(null, mc.getSource().getIssueNoteId(), mc.getSource().getIsbn()));
         return mapper.map(returnItemDTO, Return.class);
     }
 }
