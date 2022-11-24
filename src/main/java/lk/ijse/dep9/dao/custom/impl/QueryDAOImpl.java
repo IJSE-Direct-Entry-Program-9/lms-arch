@@ -23,7 +23,7 @@ public class QueryDAOImpl implements QueryDAO {
                     "SELECT b.copies - COUNT(ii.isbn) + COUNT(r.isbn) as `available_copies` " +
                             "FROM issue_item ii " +
                             "LEFT OUTER JOIN `return` r ON ii.issue_id = r.issue_id AND ii.isbn = r.isbn " +
-                            "LEFT OUTER JOIN book b ON ii.isbn = b.isbn WHERE b.isbn=? " +
+                            "RIGHT OUTER JOIN book b ON ii.isbn = b.isbn WHERE b.isbn=? " +
                             "GROUP BY b.isbn");
             stm.setString(1, isbn);
             ResultSet rst = stm.executeQuery();
