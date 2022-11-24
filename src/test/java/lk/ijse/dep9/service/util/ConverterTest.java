@@ -4,10 +4,8 @@ import com.github.javafaker.Faker;
 import lk.ijse.dep9.dto.BookDTO;
 import lk.ijse.dep9.dto.IssueNoteDTO;
 import lk.ijse.dep9.dto.MemberDTO;
-import lk.ijse.dep9.entity.Book;
-import lk.ijse.dep9.entity.IssueItem;
-import lk.ijse.dep9.entity.IssueNote;
-import lk.ijse.dep9.entity.Member;
+import lk.ijse.dep9.dto.ReturnItemDTO;
+import lk.ijse.dep9.entity.*;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
@@ -99,5 +97,14 @@ class ConverterTest {
 
         assertEquals(issueNoteDTO.getBooks().size(), issueItemList.size());
         issueItemList.forEach(System.out::println);
+    }
+
+    @Test
+    void toReturn() {
+        ReturnItemDTO returnItemDTO = new ReturnItemDTO(3, "1234-1234");
+        Return returnEntity = converter.toReturn(returnItemDTO);
+
+        assertEquals(returnItemDTO.getIsbn(), returnEntity.getReturnPK().getIsbn());
+        assertEquals(returnItemDTO.getIssueNoteId(), returnEntity.getReturnPK().getIssueId());
     }
 }

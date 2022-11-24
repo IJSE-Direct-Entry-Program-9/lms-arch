@@ -3,10 +3,8 @@ package lk.ijse.dep9.service.util;
 import lk.ijse.dep9.dto.BookDTO;
 import lk.ijse.dep9.dto.IssueNoteDTO;
 import lk.ijse.dep9.dto.MemberDTO;
-import lk.ijse.dep9.entity.Book;
-import lk.ijse.dep9.entity.IssueItem;
-import lk.ijse.dep9.entity.IssueNote;
-import lk.ijse.dep9.entity.Member;
+import lk.ijse.dep9.dto.ReturnItemDTO;
+import lk.ijse.dep9.entity.*;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ExpressionMap;
 import org.modelmapper.ModelMapper;
@@ -59,5 +57,15 @@ public class Converter {
                             new IssueItem(source.getId(), isbn)).collect(Collectors.toList());
                 });
         return mapper.map(issueNoteDTO, typeToken);
+    }
+
+    public Return toReturn(ReturnItemDTO returnItemDTO){
+        mapper.typeMap(ReturnItemDTO.class, Return.class)
+                .addMapping(ReturnItemDTO::getIsbn,
+                        (aReturn, o) -> aReturn.getReturnPK().setIsbn(o.toString()));
+        mapper.typeMap(ReturnItemDTO.class, Return.class)
+                .addMapping(ReturnItemDTO::getIssueNoteId,
+                        (aReturn, o) -> aReturn.getReturnPK().setIssueId((Integer) o));
+        return mapper.map(returnItemDTO, Return.class);
     }
 }

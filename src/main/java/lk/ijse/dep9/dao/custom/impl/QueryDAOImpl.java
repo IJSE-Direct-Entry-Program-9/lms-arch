@@ -71,4 +71,19 @@ public class QueryDAOImpl implements QueryDAO {
             throw new RuntimeException(e);
         }
     }
+
+    @Override
+    public boolean isValidIssueItem(String memberId, int issueId, String isbn) {
+        try {
+            PreparedStatement stm = connection.prepareStatement("SELECT * FROM issue_item " +
+                    "INNER JOIN issue_note `in` on issue_item.issue_id = `in`.id " +
+                    "WHERE member_id = ? AND issue_id = ? and isbn =?");
+            stm.setString(1, memberId);
+            stm.setInt(2, issueId);
+            stm.setString(3, isbn);
+            return stm.executeQuery().next();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
