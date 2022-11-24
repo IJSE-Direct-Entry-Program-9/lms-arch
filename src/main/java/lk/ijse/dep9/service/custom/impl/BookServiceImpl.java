@@ -43,7 +43,7 @@ public class BookServiceImpl implements BookService {
     @Override
     public BookDTO getBookDetails(String isbn) throws NotFoundException {
         return bookDAO.findById(isbn).
-                map(converter::fromBook)
+                map(converter::toBookDTO)
                 .orElseThrow(() -> new NotFoundException("Book doesn't exist"));
     }
 
@@ -51,7 +51,7 @@ public class BookServiceImpl implements BookService {
     public List<BookDTO> findBooks(String query, int size, int page) {
         List<Book> bookEntityList = bookDAO.findBooksByQuery(query, size, page);
         return bookEntityList.stream().
-                map(converter::fromBook)
+                map(converter::toBookDTO)
                 .collect(Collectors.toList());
     }
 }

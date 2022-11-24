@@ -7,6 +7,8 @@ import java.util.List;
 
 public interface MemberDAO extends CrudDAO<Member, String> {
 
+    boolean existsByContact(String contact);
+
     List<Member> findMembersByQuery(String query);
 
     List<Member> findMembersByQuery(String query, int size, int page);
