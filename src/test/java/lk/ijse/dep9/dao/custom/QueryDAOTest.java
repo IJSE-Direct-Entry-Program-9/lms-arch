@@ -48,4 +48,14 @@ class QueryDAOTest {
         assertEquals(2, queryDAO.getAvailableBookCopies(isbn2).get());
         assertEquals(1, queryDAO.getAvailableBookCopies(isbn3).get());
     }
+
+    @Test
+    void isAlreadyIssued() {
+        String memberId = "2714641a-301e-43d5-9d31-ad916d075ba7";
+        String isbn = "1234-7891";
+        String isbn2 = "9874-1234";
+
+        assertTrue(queryDAO.isAlreadyIssued(isbn, memberId));
+        assertFalse(queryDAO.isAlreadyIssued(isbn2, memberId));
+    }
 }

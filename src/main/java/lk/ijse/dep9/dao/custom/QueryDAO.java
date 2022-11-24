@@ -8,4 +8,6 @@ public interface QueryDAO extends SuperDAO {
 
     Optional<Integer> getAvailableBookCopies(String isbn);
 
+    boolean isAlreadyIssued(String isbn, String memberId);
+
 }

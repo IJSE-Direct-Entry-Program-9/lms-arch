@@ -40,6 +40,8 @@ public class IssueServiceImpl implements IssueService {
             int copies = queryDAO.getAvailableBookCopies(isbn).
                     orElseThrow(() -> new NotFoundException("Book: " + isbn + " doesn't exist"));
             if (copies == 0) throw new NotAvailableException("Book: " + isbn + " not available at the moment");
+            if (queryDAO.isAlreadyIssued(isbn, issueNoteDTO.getMemberId()))
+                throw new AlreadyIssuedException("Book: " + isbn + " has been already issued to the same member");
         }
         // Check how many books can be issued for this member (maximum = 3)
 
