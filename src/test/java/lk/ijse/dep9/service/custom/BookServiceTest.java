@@ -56,6 +56,18 @@ class BookServiceTest {
 
     @Test
     void updateBookDetails() {
+        Faker faker = new Faker();
+        BookDTO book1 = new BookDTO(faker.code().isbn10(), faker.book().title(), faker.book().author(),
+                2);
+        BookDTO book2 = bookService.getBookDetails("1234-1234");
+        book2.setAuthor(faker.book().author());
+        book2.setTitle(faker.book().title());
+        book2.setCopies(faker.number().numberBetween(1,3));
+
+        assertThrows(NotFoundException.class, ()-> bookService.updateBookDetails(book1));
+        bookService.updateBookDetails(book2);
+        BookDTO book3 = bookService.getBookDetails("1234-1234");
+        assertEquals(book2, book3);
     }
 
     @Test
@@ -78,5 +90,15 @@ class BookServiceTest {
 
     @Test
     void findBooks() {
+        List<BookDTO> bookList1 = bookService.findBooks("", 3, 1);
+        List<BookDTO> bookList2 = bookService.findBooks("", 3, 2);
+        List<BookDTO> bookList3 = bookService.findBooks("", 3, 3);
+        List<BookDTO> bookList4 = bookService.findBooks("Spec", 5, 1);
+
+        assertEquals(3, bookList1.size());
+        assertEquals(3, bookList2.size());
+        assertEquals(3, bookList3.size());
+        assertEquals(3, bookList4.size());
+        bookList4.forEach(System.out::println);
     }
 }
