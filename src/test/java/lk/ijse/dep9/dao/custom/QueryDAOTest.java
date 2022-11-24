@@ -15,6 +15,7 @@ import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -57,5 +58,13 @@ class QueryDAOTest {
 
         assertTrue(queryDAO.isAlreadyIssued(isbn, memberId));
         assertFalse(queryDAO.isAlreadyIssued(isbn2, memberId));
+    }
+
+    @Test
+    void availableBookLimit() {
+        String memberId1 = UUID.randomUUID().toString();
+        String memberId2 = "104ccff3-c584-4782-a582-8a06479b46f6";
+        assertTrue(queryDAO.availableBookLimit(memberId1).isEmpty());
+        assertTrue(queryDAO.availableBookLimit(memberId2).get() < 3);
     }
 }

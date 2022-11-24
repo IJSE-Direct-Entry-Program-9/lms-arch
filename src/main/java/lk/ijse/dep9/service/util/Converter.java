@@ -1,14 +1,34 @@
 package lk.ijse.dep9.service.util;
 
 import lk.ijse.dep9.dto.BookDTO;
+import lk.ijse.dep9.dto.IssueNoteDTO;
 import lk.ijse.dep9.dto.MemberDTO;
 import lk.ijse.dep9.entity.Book;
+import lk.ijse.dep9.entity.IssueItem;
+import lk.ijse.dep9.entity.IssueNote;
 import lk.ijse.dep9.entity.Member;
+import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ExpressionMap;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
+import org.modelmapper.builder.ConfigurableConditionExpression;
 
+import java.lang.reflect.Type;
+import java.sql.Date;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Slf4j
 public class Converter {
 
-    private ModelMapper mapper = new ModelMapper();
+    private ModelMapper mapper;
+
+    public Converter() {
+        this.mapper = new ModelMapper();
+        mapper.typeMap(LocalDate.class, Date.class).setConverter(mc -> Date.valueOf(mc.getSource()));
+    }
 
     public BookDTO toBookDTO(Book bookEntity) {
         return mapper.map(bookEntity, BookDTO.class);
@@ -24,5 +44,20 @@ public class Converter {
 
     public Member toMember(MemberDTO memberDTO){
         return mapper.map(memberDTO, Member.class);
+    }
+
+    public IssueNote toIssueNote(IssueNoteDTO issueNoteDTO){
+        return mapper.map(issueNoteDTO, IssueNote.class);
+    }
+
+    public List<IssueItem> toIssueItemList(IssueNoteDTO issueNoteDTO){
+        Type typeToken = new TypeToken<List<IssueItem>>() {}.getType();
+        mapper.typeMap(IssueNoteDTO.class, List.class)
+                .setConverter(mc -> {
+                    IssueNoteDTO source = mc.getSource();
+                    return source.getBooks().stream().map(isbn ->
+                            new IssueItem(source.getId(), isbn)).collect(Collectors.toList());
+                });
+        return mapper.map(issueNoteDTO, typeToken);
     }
 }

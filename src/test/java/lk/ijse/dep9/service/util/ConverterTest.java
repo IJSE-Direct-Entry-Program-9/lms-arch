@@ -2,18 +2,25 @@ package lk.ijse.dep9.service.util;
 
 import com.github.javafaker.Faker;
 import lk.ijse.dep9.dto.BookDTO;
+import lk.ijse.dep9.dto.IssueNoteDTO;
 import lk.ijse.dep9.dto.MemberDTO;
 import lk.ijse.dep9.entity.Book;
+import lk.ijse.dep9.entity.IssueItem;
+import lk.ijse.dep9.entity.IssueNote;
 import lk.ijse.dep9.entity.Member;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ConverterTest {
 
-    private Converter converter = new Converter();
+    private final Converter converter = new Converter();
 
     @Test
     void toBookDTO() {
@@ -67,5 +74,30 @@ class ConverterTest {
         assertEquals(memberDTO.getName(), memberEntity.getName());
         assertEquals(memberDTO.getAddress(), memberEntity.getAddress());
         assertEquals(memberDTO.getContact(), memberEntity.getContact());
+    }
+
+    @Test
+    void toIssueNote() {
+        ArrayList<String> books = new ArrayList<>(Arrays.asList("1234-1234", "1111-1234", "4561-1234"));
+        IssueNoteDTO issueNoteDTO = new IssueNoteDTO(1, LocalDate.now(),
+                UUID.randomUUID().toString(), books);
+
+        IssueNote issueNote = converter.toIssueNote(issueNoteDTO);
+
+        assertEquals(issueNoteDTO.getId(), issueNote.getId());
+        assertEquals(issueNoteDTO.getMemberId(), issueNote.getMemberId());
+        assertEquals(issueNoteDTO.getDate().toString(), issueNote.getDate().toString());
+    }
+
+    @Test
+    void toIssueItem() {
+        ArrayList<String> books = new ArrayList<>(Arrays.asList("1234-1234", "1111-1234", "4561-1234"));
+        IssueNoteDTO issueNoteDTO = new IssueNoteDTO(5, LocalDate.now(),
+                UUID.randomUUID().toString(), books);
+
+        List<IssueItem> issueItemList = converter.toIssueItemList(issueNoteDTO);
+
+        assertEquals(issueNoteDTO.getBooks().size(), issueItemList.size());
+        issueItemList.forEach(System.out::println);
     }
 }
