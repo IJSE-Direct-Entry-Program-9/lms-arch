@@ -91,7 +91,7 @@ public class MemberServlet extends HttpServlet2 {
             MemberService memberService = ServiceFactory.getInstance().getService(ServiceTypes.MEMBER);
             MemberDTO memberDetails = memberService.getMemberDetails(memberId);
             response.setContentType("application/json");
-            JsonbBuilder.create().toJson(memberDetails);
+            JsonbBuilder.create().toJson(memberDetails, response.getWriter());
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
