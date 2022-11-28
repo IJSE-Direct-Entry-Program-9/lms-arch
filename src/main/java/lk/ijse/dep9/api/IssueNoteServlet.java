@@ -13,6 +13,7 @@ import jakarta.validation.ValidationException;
 import jakarta.validation.Validator;
 import lk.ijse.dep9.api.util.HttpServlet2;
 import lk.ijse.dep9.dto.IssueNoteDTO;
+import lk.ijse.dep9.exception.ResponseStatusException;
 import lk.ijse.dep9.service.ServiceFactory;
 import lk.ijse.dep9.service.ServiceTypes;
 import lk.ijse.dep9.service.custom.IssueService;
@@ -34,8 +35,7 @@ public class IssueNoteServlet extends HttpServlet2 {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         if (request.getPathInfo() != null && !request.getPathInfo().equals("/")) {
-            response.sendError(HttpServletResponse.SC_NOT_IMPLEMENTED);
-            return;
+            throw new ResponseStatusException(501);
         }
 
         try {
@@ -46,7 +46,7 @@ public class IssueNoteServlet extends HttpServlet2 {
             IssueNoteDTO issueNote = JsonbBuilder.create().fromJson(request.getReader(), IssueNoteDTO.class);
             createNewIssueNote(issueNote, response);
         } catch (JsonbException e) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
+            throw new ValidationException(e);
         }
     }
 

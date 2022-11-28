@@ -13,6 +13,7 @@ import jakarta.validation.ValidationException;
 import jakarta.validation.Validator;
 import lk.ijse.dep9.api.util.HttpServlet2;
 import lk.ijse.dep9.dto.BookDTO;
+import lk.ijse.dep9.exception.ResponseStatusException;
 import lk.ijse.dep9.service.BOLogic;
 import lk.ijse.dep9.service.ServiceFactory;
 import lk.ijse.dep9.service.ServiceTypes;
@@ -65,7 +66,7 @@ public class BookServlet extends HttpServlet2 {
             if (matcher.matches()) {
                 getBookDetails(matcher.group(1), response);
             } else {
-                response.sendError(HttpServletResponse.SC_NOT_IMPLEMENTED);
+                throw new ResponseStatusException(501);
             }
         }
     }
@@ -75,15 +76,14 @@ public class BookServlet extends HttpServlet2 {
         if (request.getPathInfo() == null || request.getPathInfo().equals("/")) {
             saveBook(request, response);
         } else {
-            response.sendError(HttpServletResponse.SC_NOT_IMPLEMENTED);
+            throw new ResponseStatusException(501);
         }
     }
 
     @Override
     protected void doPatch(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         if (request.getPathInfo() == null || request.getPathInfo().equals("/")) {
-            response.sendError(HttpServletResponse.SC_NOT_IMPLEMENTED);
-            return;
+            throw new ResponseStatusException(501);
         }
 
         Matcher matcher = Pattern.
@@ -92,7 +92,7 @@ public class BookServlet extends HttpServlet2 {
         if (matcher.matches()) {
             updateBookDetails(matcher.group(1), request, response);
         } else {
-            response.sendError(HttpServletResponse.SC_NOT_IMPLEMENTED);
+            throw new ResponseStatusException(501);
         }
     }
 
@@ -163,6 +163,8 @@ public class BookServlet extends HttpServlet2 {
             violations.stream().findAny().ifPresent(violation -> {
                 throw new ValidationException(violation.getMessage());
             });
+
+            if (!book.getIsbn().equals(isbn)) throw new ValidationException("Book isbns are mismatched");
 
             try (Connection connection = pool.getConnection()) {
                 ConnectionUtil.setConnection(connection);
