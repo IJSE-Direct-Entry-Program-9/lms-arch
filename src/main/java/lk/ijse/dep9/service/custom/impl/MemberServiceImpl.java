@@ -18,8 +18,8 @@ import java.util.stream.Collectors;
 
 public class MemberServiceImpl implements MemberService {
 
-    private MemberDAO memberDAO;
-    private Converter converter;
+    private final MemberDAO memberDAO;
+    private final Converter converter;
 
     public MemberServiceImpl() {
         memberDAO = DAOFactory.getInstance().getDAO(ConnectionUtil.getConnection(), DAOTypes.MEMBER);
